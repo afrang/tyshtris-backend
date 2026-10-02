@@ -1,0 +1,34 @@
+<Solution>
+  <Folder Name="/src/" />
+  <Folder Name="/src/BuildingBlocks/">
+    <Project Path="src/BuildingBlocks/TishtryaCMS.SharedKernel/TishtryaCMS.SharedKernel.csproj" />
+  </Folder>
+  <Folder Name="/src/Host/">
+    <Project Path="src/Host/TishtryaCMS.Api/TishtryaCMS.Api.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/" />
+  <Folder Name="/src/Modules/ContentModules/">
+    <Project Path="src/Modules/ContentModules/TishtryaCMS.Modules.ContentModules/TishtryaCMS.Modules.ContentModules.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/EditorTrya/">
+    <Project Path="src/Modules/EditorTrya/TishtryaCMS.Modules.EditorTrya/TishtryaCMS.Modules.EditorTrya.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/FileManager/">
+    <Project Path="src/Modules/FileManager/TishtryaCMS.Modules.FileManager/TishtryaCMS.Modules.FileManager.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Qa/">
+    <Project Path="src/Modules/Qa/TishtryaCMS.Modules.Qa/TishtryaCMS.Modules.Qa.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Comments/">
+    <Project Path="src/Modules/Comments/TishtryaCMS.Modules.Comments/TishtryaCMS.Modules.Comments.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Forms/">
+    <Project Path="src/Modules/Forms/TishtryaCMS.Modules.Forms/TishtryaCMS.Modules.Forms.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Identity/">
+    <Project Path="src/Modules/Identity/TishtryaCMS.Modules.Identity/TishtryaCMS.Modules.Identity.csproj" />
+  </Folder>
+  <Folder Name="/src/Modules/Settings/">
+    <Project Path="src/Modules/Settings/TishtryaCMS.Modules.Settings/TishtryaCMS.Modules.Settings.csproj" />
+  </Folder>
+</Solution>

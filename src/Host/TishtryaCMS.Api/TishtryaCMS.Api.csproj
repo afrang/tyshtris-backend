@@ -1,0 +1,31 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.10">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.10" />
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="10.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\BuildingBlocks\TishtryaCMS.SharedKernel\TishtryaCMS.SharedKernel.csproj" />
+    <ProjectReference Include="..\..\Modules\Identity\TishtryaCMS.Modules.Identity\TishtryaCMS.Modules.Identity.csproj" />
+    <ProjectReference Include="..\..\Modules\ContentModules\TishtryaCMS.Modules.ContentModules\TishtryaCMS.Modules.ContentModules.csproj" />
+    <ProjectReference Include="..\..\Modules\FileManager\TishtryaCMS.Modules.FileManager\TishtryaCMS.Modules.FileManager.csproj" />
+    <ProjectReference Include="..\..\Modules\EditorTrya\TishtryaCMS.Modules.EditorTrya\TishtryaCMS.Modules.EditorTrya.csproj" />
+    <ProjectReference Include="..\..\Modules\Qa\TishtryaCMS.Modules.Qa\TishtryaCMS.Modules.Qa.csproj" />
+    <ProjectReference Include="..\..\Modules\Comments\TishtryaCMS.Modules.Comments\TishtryaCMS.Modules.Comments.csproj" />
+    <ProjectReference Include="..\..\Modules\Forms\TishtryaCMS.Modules.Forms\TishtryaCMS.Modules.Forms.csproj" />
+    <ProjectReference Include="..\..\Modules\Tickets\TishtryaCMS.Modules.Tickets\TishtryaCMS.Modules.Tickets.csproj" />
+    <ProjectReference Include="..\..\Modules\Settings\TishtryaCMS.Modules.Settings\TishtryaCMS.Modules.Settings.csproj" />
+  </ItemGroup>
+
+</Project>

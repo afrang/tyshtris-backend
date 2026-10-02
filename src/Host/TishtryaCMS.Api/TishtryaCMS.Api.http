@@ -1,0 +1,20 @@
+@TishtryaCMS.Api_HostAddress = http://localhost:5068
+
+GET {{TishtryaCMS.Api_HostAddress}}/health
+Accept: application/json
+
+###
+
+GET {{TishtryaCMS.Api_HostAddress}}/health/db
+Accept: application/json
+
+###
+
+POST {{TishtryaCMS.Api_HostAddress}}/api/auth/login
+Content-Type: application/json
+
+{
+  "email": "info@tishtrya.cp",
+  "password": "essi36865"
+}
+

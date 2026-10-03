@@ -1,0 +1,54 @@
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_PID: ${MSSQL_PID:-Express}
+      MSSQL_SA_PASSWORD: ${MSSQL_SA_PASSWORD:?Set MSSQL_SA_PASSWORD in the server environment}
+    volumes:
+      - sqlserver-data:/var/opt/mssql
+    restart: unless-stopped
+    healthcheck:
+      test:
+        - CMD
+        - /opt/mssql-tools18/bin/sqlcmd
+        - -S
+        - localhost
+        - -U
+        - sa
+        - -P
+        - ${MSSQL_SA_PASSWORD}
+        - -C
+        - -Q
+        - SELECT 1
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 30s
+
+  api:
+    image: ${API_IMAGE:?Set API_IMAGE to the published container image}
+    environment:
+      ASPNETCORE_ENVIRONMENT: Production
+      ASPNETCORE_URLS: http://+:8080
+      ConnectionStrings__DefaultConnection: Server=sqlserver,1433;Database=TishtryaCMS;User Id=sa;Password=${MSSQL_SA_PASSWORD};TrustServerCertificate=True;Encrypt=False;
+      Jwt__Key: ${JWT_KEY:?Set JWT_KEY in the server environment}
+      Smtp__Host: ${SMTP_HOST:-smtp.example.com}
+      Smtp__Port: ${SMTP_PORT:-587}
+      Smtp__Username: ${SMTP_USERNAME:-}
+      Smtp__Password: ${SMTP_PASSWORD:-}
+      Smtp__EnableSsl: ${SMTP_ENABLE_SSL:-true}
+      Smtp__DefaultFromAddress: ${SMTP_FROM_ADDRESS:-noreply@example.com}
+      Turnstile__SecretKey: ${TURNSTILE_SECRET_KEY:-}
+    ports:
+      - "${API_PORT:-5068}:8080"
+    volumes:
+      - api-uploads:/app/wwwroot/uploads
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: unless-stopped
+
+volumes:
+  sqlserver-data:
+  api-uploads:

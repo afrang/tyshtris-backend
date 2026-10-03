@@ -35,7 +35,17 @@ docker compose down
 docker compose down -v   # also wipe SQL + uploads volumes
 ```
 
-Images are also built/pushed by `.github/workflows/docker.yml` on push to `main`/`master`.
+Images are built and deployed by `.github/workflows/deploy.yml` on push to `main`.
+
+### Deploy API + SQL Server with GitHub Actions
+
+The `deploy.yml` workflow publishes the API image to GitHub Container Registry and deploys it with `docker-compose.deploy.yml` over SSH. The target server needs Docker Engine with the Compose plugin and an SSH user allowed to run Docker. Configure these repository Actions secrets:
+
+- `SERVER_HOST`, `SERVER_USER`, `SERVER_SSH_KEY`
+- `GHCR_TOKEN` with permission to pull the package from GHCR
+- `MSSQL_SA_PASSWORD` (strong SQL Server password) and `JWT_KEY` (at least 32 characters)
+
+Optional secrets: `SERVER_PORT` (defaults to `22`), `DEPLOY_PATH` (defaults to `/opt/tishtrya-cms`), `SMTP_USERNAME`, `SMTP_PASSWORD`, and `TURNSTILE_SECRET_KEY`. Optional Actions variables: `API_PORT` (defaults to `5068`), `MSSQL_PID` (defaults to `Express`), and SMTP settings. The API and SQL data are persisted in Docker volumes; do not run `docker compose down -v` on the deployment host unless you intend to delete them.
 
 ## Connection string
 

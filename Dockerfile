@@ -22,6 +22,10 @@ COPY src/Modules/Comments/TishtryaCMS.Modules.Comments/TishtryaCMS.Modules.Comme
     src/Modules/Comments/TishtryaCMS.Modules.Comments/
 COPY src/Modules/Settings/TishtryaCMS.Modules.Settings/TishtryaCMS.Modules.Settings.csproj \
     src/Modules/Settings/TishtryaCMS.Modules.Settings/
+COPY src/Modules/Forms/TishtryaCMS.Modules.Forms/TishtryaCMS.Modules.Forms.csproj \
+    src/Modules/Forms/TishtryaCMS.Modules.Forms/
+COPY src/Modules/Tickets/TishtryaCMS.Modules.Tickets/TishtryaCMS.Modules.Tickets.csproj \
+    src/Modules/Tickets/TishtryaCMS.Modules.Tickets/
 
 RUN dotnet restore src/Host/TishtryaCMS.Api/TishtryaCMS.Api.csproj
 

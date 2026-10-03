@@ -1,4 +1,4 @@
-name: Deploy .NET API
+name: Build .NET API image
 
 on:
   push:
@@ -44,67 +44,3 @@ jobs:
           tags: |
             ${{ steps.image.outputs.name }}:latest
             ${{ steps.image.outputs.name }}:${{ github.sha }}
-
-      - name: Prepare deployment files
-        run: |
-          mkdir -p deploy
-          cp docker-compose.deploy.yml deploy/docker-compose.yml
-          cat > deploy/deploy.env <<'EOF'
-          API_IMAGE=${{ steps.image.outputs.name }}:${{ github.sha }}
-          MSSQL_SA_PASSWORD=${{ secrets.MSSQL_SA_PASSWORD }}
-          JWT_KEY=${{ secrets.JWT_KEY }}
-          API_PORT=${{ vars.API_PORT || '5068' }}
-          MSSQL_PID=${{ vars.MSSQL_PID || 'Express' }}
-          SMTP_HOST=${{ vars.SMTP_HOST || 'smtp.example.com' }}
-          SMTP_PORT=${{ vars.SMTP_PORT || '587' }}
-          SMTP_USERNAME=${{ secrets.SMTP_USERNAME }}
-          SMTP_PASSWORD=${{ secrets.SMTP_PASSWORD }}
-          SMTP_ENABLE_SSL=${{ vars.SMTP_ENABLE_SSL || 'true' }}
-          SMTP_FROM_ADDRESS=${{ vars.SMTP_FROM_ADDRESS || 'noreply@example.com' }}
-          TURNSTILE_SECRET_KEY=${{ secrets.TURNSTILE_SECRET_KEY }}
-          EOF
-
-
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
-
-      - name: Prepare deployment directory
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || '22' }}
-          script: mkdir -p "${{ secrets.DEPLOY_PATH || '/opt/tishtrya-cms' }}"
-
-      - name: Copy deployment files
-        uses: appleboy/scp-action@v0.1.7
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || '22' }}
-          source: "deploy/*"
-          target: ${{ secrets.DEPLOY_PATH || '/opt/tishtrya-cms' }}
-          strip_components: 1
-
-      - name: Deploy to server
-        uses: appleboy/ssh-action@v1
-        with:
-          host: ${{ secrets.SERVER_HOST }}
-          username: ${{ secrets.SERVER_USER }}
-          key: ${{ secrets.SERVER_SSH_KEY }}
-          port: ${{ secrets.SERVER_PORT || '22' }}
-          script: |
-            cd "${{ secrets.DEPLOY_PATH || '/opt/tishtrya-cms' }}"
-            mv deploy.env .env
-            chmod 600 .env
-            echo "${{ secrets.GHCR_TOKEN }}" | docker login ghcr.io \
-              -u "${{ github.actor }}" \
-              --password-stdin
-            docker compose -f docker-compose.yml pull
-            docker compose -f docker-compose.yml up -d
-            docker image prune -f

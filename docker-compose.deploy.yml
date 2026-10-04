@@ -43,7 +43,11 @@ services:
     ports:
       - "${API_PORT:-5068}:8080"
     volumes:
-      - api-uploads:/app/wwwroot/uploads
+      # Bind-mount so uploads survive image recreates and are easy to restore on the host.
+      # Set UPLOADS_HOST_PATH in the server .env (absolute path recommended), e.g.:
+      #   UPLOADS_HOST_PATH=/var/lib/tishtrya/uploads
+      # Then copy files into that host folder (keep folder names like blogthumbnail/2026/10/...).
+      - ${UPLOADS_HOST_PATH:-./data/uploads}:/app/wwwroot/uploads
     depends_on:
       sqlserver:
         condition: service_healthy
@@ -51,4 +55,3 @@ services:
 
 volumes:
   sqlserver-data:
-  api-uploads:

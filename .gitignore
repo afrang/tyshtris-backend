@@ -12,6 +12,10 @@ obj/
 appsettings.*.local.json
 secrets.json
 
+## Database exports
+exports/
+*.bak
+
 ## OS
 .DS_Store
 Thumbs.db

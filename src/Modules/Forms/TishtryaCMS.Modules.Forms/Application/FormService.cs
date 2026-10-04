@@ -4,10 +4,11 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using TishtryaCMS.Modules.Forms.Domain;
 using TishtryaCMS.Modules.Forms.Infrastructure;
+using TishtryaCMS.SharedKernel.Turnstile;
 
 namespace TishtryaCMS.Modules.Forms.Application;
 
-public sealed class FormService(FormsDbContext db)
+public sealed class FormService(FormsDbContext db, ITurnstileValidator turnstile)
 {
     private static readonly JsonSerializerOptions JsonOptions = new()
     {
@@ -455,6 +456,12 @@ public sealed class FormService(FormsDbContext db)
         if (publicForm is null)
         {
             return (null, error, statusCode);
+        }
+
+        var captchaError = await turnstile.ValidateAsync(request.CaptchaToken, cancellationToken);
+        if (captchaError is not null)
+        {
+            return (null, captchaError, StatusCodes.Status400BadRequest);
         }
 
         var values = request.Values ?? new Dictionary<string, string?>();

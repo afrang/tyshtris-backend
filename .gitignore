@@ -10,6 +10,8 @@ obj/
 
 ## Secrets
 appsettings.*.local.json
+.env
+.env.*
 secrets.json
 
 ## Database exports

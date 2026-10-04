@@ -1,6 +1,6 @@
 namespace TishtryaCMS.Modules.Identity.Application;
 
-public sealed record RegisterRequest(string Email, string Password);
+public sealed record RegisterRequest(string Email, string Password, string? CaptchaToken = null);
 
 public sealed record VerifyOtpRequest(
     string Email,

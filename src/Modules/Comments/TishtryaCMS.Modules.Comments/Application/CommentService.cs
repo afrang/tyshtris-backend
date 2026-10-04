@@ -4,10 +4,14 @@ using Microsoft.EntityFrameworkCore;
 using TishtryaCMS.Modules.Comments.Domain;
 using TishtryaCMS.Modules.Comments.Infrastructure;
 using TishtryaCMS.Modules.ContentModules.Infrastructure;
+using TishtryaCMS.SharedKernel.Turnstile;
 
 namespace TishtryaCMS.Modules.Comments.Application;
 
-public sealed class CommentService(CommentsDbContext db, ContentModulesDbContext contentDb)
+public sealed class CommentService(
+    CommentsDbContext db,
+    ContentModulesDbContext contentDb,
+    ITurnstileValidator turnstile)
 {
     public static readonly Guid GuestUserId = Guid.Parse("00000000-0000-0000-0000-000000000001");
 
@@ -142,6 +146,12 @@ public sealed class CommentService(CommentsDbContext db, ContentModulesDbContext
     {
         try
         {
+            var captchaError = await turnstile.ValidateAsync(request.CaptchaToken, cancellationToken);
+            if (captchaError is not null)
+            {
+                return (null, captchaError, StatusCodes.Status400BadRequest);
+            }
+
             var normalized = Comment.NormalizeComponent(component);
             if (parentId == Guid.Empty)
             {

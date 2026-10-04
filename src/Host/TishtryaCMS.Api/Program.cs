@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Http.Features;
 using Microsoft.Data.SqlClient;
 using Microsoft.OpenApi;
 using TishtryaCMS.Api;
+using TishtryaCMS.SharedKernel.Turnstile;
 using TishtryaCMS.Modules.Comments;
 using TishtryaCMS.Modules.Comments.Infrastructure;
 using TishtryaCMS.Modules.ContentModules;
@@ -22,6 +23,11 @@ using TishtryaCMS.Modules.Tickets;
 using TishtryaCMS.Modules.Tickets.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Configuration.AddJsonFile(
+    $"appsettings.{builder.Environment.EnvironmentName}.local.json",
+    optional: true,
+    reloadOnChange: true);
 
 var maxDirectUpload = builder.Configuration.GetValue("FileManager:MaxFileSizeBytes", 5L * 1024 * 1024);
 var maxChunkSize = builder.Configuration.GetValue("FileManager:ChunkSizeBytes", 2 * 1024 * 1024);
@@ -78,6 +84,8 @@ builder.Services.AddCors(options =>
             .AllowAnyMethod();
     });
 });
+
+builder.Services.AddTurnstileValidator();
 
 var identityModule = new IdentityModule();
 identityModule.Register(builder.Services, builder.Configuration);

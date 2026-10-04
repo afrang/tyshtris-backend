@@ -18,7 +18,8 @@ public sealed record CreateCommentRequest(
     string Body,
     Guid? ParentCommentId,
     string? AuthorDisplayName = null,
-    string? AuthorEmail = null);
+    string? AuthorEmail = null,
+    string? CaptchaToken = null);
 
 public sealed record UpdateCommentRequest(string Body);
 

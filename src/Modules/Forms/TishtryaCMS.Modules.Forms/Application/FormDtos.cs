@@ -66,7 +66,9 @@ public sealed record FormSubmissionResponse(
     string? IpAddress,
     DateTime CreatedAt);
 
-public sealed record SubmitFormRequest(IReadOnlyDictionary<string, string?> Values);
+public sealed record SubmitFormRequest(
+    IReadOnlyDictionary<string, string?> Values,
+    string? CaptchaToken = null);
 
 public sealed record PublicFormResponse(
     Guid Id,

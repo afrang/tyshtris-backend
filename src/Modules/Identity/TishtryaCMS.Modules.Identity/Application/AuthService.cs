@@ -1,13 +1,12 @@
-using System.Net.Http.Json;
 using System.Net.Mail;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using TishtryaCMS.Modules.Identity.Domain;
 using TishtryaCMS.Modules.Identity.Infrastructure;
 using TishtryaCMS.Modules.Identity.Options;
+using TishtryaCMS.SharedKernel.Turnstile;
 
 namespace TishtryaCMS.Modules.Identity.Application;
 
@@ -15,16 +14,11 @@ public sealed class AuthService(
     IdentityDbContext db,
     JwtTokenService jwt,
     PasswordHasher<User> hasher,
-    IConfiguration config,
     OtpCodeService otpSvc,
     IEmailSender emailSender,
-    IOptions<OtpOptions> otpOpts)
+    IOptions<OtpOptions> otpOpts,
+    ITurnstileValidator turnstile)
 {
-    private static readonly HttpClient TurnstileClient = new()
-    {
-        BaseAddress = new Uri("https://challenges.cloudflare.com/")
-    };
-
     public async Task<(LoginResponse? Response, string? Error)> LoginAsync(
         LoginRequest request,
         CancellationToken cancellationToken = default)
@@ -34,7 +28,7 @@ public sealed class AuthService(
             return (null, "Email and password are required.");
         }
 
-        var captchaError = await ValidateCaptchaAsync(request.CaptchaToken, cancellationToken);
+        var captchaError = await turnstile.ValidateAsync(request.CaptchaToken, cancellationToken);
         if (captchaError is not null)
         {
             return (null, captchaError);
@@ -75,6 +69,12 @@ public sealed class AuthService(
         if (string.IsNullOrWhiteSpace(request.Password) || request.Password.Length < 6)
         {
             return (null, "Password must be at least 6 characters.", StatusCodes.Status400BadRequest);
+        }
+
+        var captchaError = await turnstile.ValidateAsync(request.CaptchaToken, cancellationToken);
+        if (captchaError is not null)
+        {
+            return (null, captchaError, StatusCodes.Status400BadRequest);
         }
 
         var email = request.Email.Trim().ToLowerInvariant();
@@ -298,64 +298,5 @@ public sealed class AuthService(
 
         var (token, expiresAt) = jwt.CreateToken(user);
         return (new LoginResponse(token, expiresAt, user.Email, user.DisplayName, user.Role, user.Id), null);
-    }
-
-    private async Task<string?> ValidateCaptchaAsync(
-        string? captchaToken,
-        CancellationToken cancellationToken)
-    {
-        var secretKey = config["Turnstile:SecretKey"];
-        if (string.IsNullOrWhiteSpace(secretKey))
-        {
-            return null;
-        }
-
-        if (string.IsNullOrWhiteSpace(captchaToken))
-        {
-            return "Captcha challenge is required.";
-        }
-
-        try
-        {
-            var payload = new FormUrlEncodedContent(new Dictionary<string, string?>
-            {
-                ["secret"] = secretKey,
-                ["response"] = captchaToken
-            });
-
-            using var response = await TurnstileClient.PostAsync(
-                "turnstile/v0/siteverify",
-                payload,
-                cancellationToken);
-
-            response.EnsureSuccessStatusCode();
-
-            var result = await response.Content.ReadFromJsonAsync<TurnstileResponse>(cancellationToken);
-            if (result is null || !result.Success)
-            {
-                return "Captcha verification failed. Please try again.";
-            }
-
-            return null;
-        }
-        catch
-        {
-            return "Captcha verification unavailable. Please try again shortly.";
-        }
-    }
-
-    // ReSharper disable once ClassNeverInstantiated.Local
-    private sealed class TurnstileResponse
-    {
-        public bool Success { get; set; }
-
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        public string? ChallengeTs { get; set; }
-
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        public string? Hostname { get; set; }
-
-        // ReSharper disable once UnusedAutoPropertyAccessor.Local
-        public string[]? ErrorCodes { get; set; }
     }
 }

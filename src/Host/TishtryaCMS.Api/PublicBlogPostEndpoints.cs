@@ -29,6 +29,7 @@ public static class PublicBlogPostEndpoints
 
                 var breadcrumbs = new List<BlogGroupBreadcrumbItem>();
                 var primaryGroup = post.Groups.FirstOrDefault();
+                var showTimestamp = true;
                 if (primaryGroup is not null)
                 {
                     var trail = await blogGroupService.GetBreadcrumbAsync(
@@ -36,6 +37,15 @@ public static class PublicBlogPostEndpoints
                         lang,
                         cancellationToken);
                     breadcrumbs.AddRange(trail);
+
+                    var (group, _, _) = await blogGroupService.GetByIdAsync(
+                        primaryGroup.Id,
+                        lang,
+                        cancellationToken);
+                    if (group is not null)
+                    {
+                        showTimestamp = group.ShowTimestamp;
+                    }
                 }
 
                 breadcrumbs.Add(new BlogGroupBreadcrumbItem(post.Id, post.Title, post.Slug));
@@ -76,6 +86,7 @@ public static class PublicBlogPostEndpoints
                     post.MetaTitle,
                     post.MetaDescription,
                     post.CommentsEnabled,
+                    showTimestamp,
                     post.CreatedAt,
                     post.UpdatedAt,
                     post.LanguagePrefix,

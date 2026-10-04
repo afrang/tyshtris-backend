@@ -39,6 +39,8 @@ On push to `main`, `.github/workflows/deploy.yml` builds the API image and publi
 
 For server deployment, configure the variables and secrets required by `docker-compose.deploy.yml` on the target host, then run Docker Compose there. The API and SQL data are persisted in Docker volumes; do not run `docker compose down -v` unless you intend to delete them.
 
+`JWT_KEY` must contain at least 32 characters. Generate a strong value on the server with `openssl rand -base64 48`, put it in the deployment `.env` as `JWT_KEY=<generated-value>`, then recreate the API container with `docker compose up -d --force-recreate api`. Changing this key invalidates existing login tokens, so users will need to sign in again.
+
 ## Connection string
 
 Edit `src/Host/TishtryaCMS.Api/appsettings.json`:

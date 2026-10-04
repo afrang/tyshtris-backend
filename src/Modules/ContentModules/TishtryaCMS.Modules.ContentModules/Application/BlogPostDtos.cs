@@ -73,6 +73,7 @@ public sealed record PublicBlogPostPageResponse(
     string? MetaTitle,
     string? MetaDescription,
     bool CommentsEnabled,
+    bool ShowTimestamp,
     DateTime CreatedAt,
     DateTime UpdatedAt,
     string? LanguagePrefix,

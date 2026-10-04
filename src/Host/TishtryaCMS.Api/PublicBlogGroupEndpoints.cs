@@ -79,6 +79,7 @@ public static class PublicBlogGroupEndpoints
                     group.Keyword,
                     group.Description,
                     group.ParentId,
+                    group.ShowTimestamp,
                     group.LanguagePrefix,
                     groupThumbnails.TryGetValue(group.Id, out var groupThumb) ? groupThumb : null,
                     breadcrumb,

@@ -176,7 +176,8 @@ public sealed class BlogGroupService(ContentModulesDbContext db)
                 request.Slug,
                 request.Keyword,
                 request.Description,
-                request.ParentId);
+                request.ParentId,
+                request.ShowTimestamp ?? true);
 
             db.BlogGroups.Add(group);
             await db.SaveChangesAsync(cancellationToken);
@@ -233,7 +234,8 @@ public sealed class BlogGroupService(ContentModulesDbContext db)
                 request.Slug,
                 request.Keyword,
                 request.Description,
-                request.ParentId);
+                request.ParentId,
+                request.ShowTimestamp ?? group.ShowTimestamp);
 
             var translation = await db.BlogGroupTranslations
                 .FirstOrDefaultAsync(x => x.GroupId == id && x.LanguagePrefix == prefix, cancellationToken);
@@ -382,6 +384,7 @@ public sealed class BlogGroupService(ContentModulesDbContext db)
             t is null ? group.Keyword : t.Keyword,
             t is null ? group.Description : t.Description,
             group.ParentId,
+            group.ShowTimestamp,
             langPrefix);
     }
 
@@ -398,6 +401,7 @@ public sealed class BlogGroupService(ContentModulesDbContext db)
                 x.Keyword,
                 x.Description,
                 x.ParentId,
+                x.ShowTimestamp,
                 x.LanguagePrefix,
                 BuildTree(groups, x.Id)))
             .ToList();

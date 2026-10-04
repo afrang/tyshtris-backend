@@ -5,14 +5,16 @@ public sealed record CreateBlogGroupRequest(
     string Slug,
     string? Keyword,
     string? Description,
-    Guid? ParentId);
+    Guid? ParentId,
+    bool? ShowTimestamp);
 
 public sealed record UpdateBlogGroupRequest(
     string Title,
     string Slug,
     string? Keyword,
     string? Description,
-    Guid? ParentId);
+    Guid? ParentId,
+    bool? ShowTimestamp);
 
 public sealed record BlogGroupResponse(
     Guid Id,
@@ -21,6 +23,7 @@ public sealed record BlogGroupResponse(
     string? Keyword,
     string? Description,
     Guid? ParentId,
+    bool ShowTimestamp,
     string? LanguagePrefix);
 
 public sealed record BlogGroupTreeResponse(
@@ -30,6 +33,7 @@ public sealed record BlogGroupTreeResponse(
     string? Keyword,
     string? Description,
     Guid? ParentId,
+    bool ShowTimestamp,
     string? LanguagePrefix,
     IReadOnlyList<BlogGroupTreeResponse> Children);
 
@@ -53,6 +57,7 @@ public sealed record PublicBlogGroupPageResponse(
     string? Keyword,
     string? Description,
     Guid? ParentId,
+    bool ShowTimestamp,
     string? LanguagePrefix,
     string? ThumbnailUrl,
     IReadOnlyList<BlogGroupBreadcrumbItem> Breadcrumb,

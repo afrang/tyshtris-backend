@@ -57,6 +57,11 @@ public sealed class ContentModulesDbContext(DbContextOptions<ContentModulesDbCon
             entity.Property(x => x.ParentId)
                 .HasColumnName("parent_id");
 
+            entity.Property(x => x.ShowTimestamp)
+                .HasColumnName("show_timestamp")
+                .HasDefaultValue(true)
+                .IsRequired();
+
             entity.HasOne(x => x.Parent)
                 .WithMany(x => x.Children)
                 .HasForeignKey(x => x.ParentId)

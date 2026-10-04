@@ -9,6 +9,7 @@ public sealed class BlogGroup : Entity
     public string? Keyword { get; private set; }
     public string? Description { get; private set; }
     public Guid? ParentId { get; private set; }
+    public bool ShowTimestamp { get; private set; } = true;
 
     public BlogGroup? Parent { get; private set; }
     public ICollection<BlogGroup> Children { get; private set; } = new List<BlogGroup>();
@@ -23,7 +24,8 @@ public sealed class BlogGroup : Entity
         string slug,
         string? keyword,
         string? description,
-        Guid? parentId)
+        Guid? parentId,
+        bool showTimestamp = true)
     {
         return new BlogGroup
         {
@@ -33,7 +35,8 @@ public sealed class BlogGroup : Entity
             Slug = NormalizeSlug(slug),
             Keyword = NormalizeOptional(keyword),
             Description = NormalizeOptional(description),
-            ParentId = parentId
+            ParentId = parentId,
+            ShowTimestamp = showTimestamp,
         };
     }
 
@@ -42,13 +45,15 @@ public sealed class BlogGroup : Entity
         string slug,
         string? keyword,
         string? description,
-        Guid? parentId)
+        Guid? parentId,
+        bool showTimestamp)
     {
         Title = NormalizeRequired(title, nameof(title));
         Slug = NormalizeSlug(slug);
         Keyword = NormalizeOptional(keyword);
         Description = NormalizeOptional(description);
         ParentId = parentId;
+        ShowTimestamp = showTimestamp;
     }
 
     private static string NormalizeRequired(string value, string fieldName)

@@ -69,6 +69,8 @@ builder.Services.AddCors(options =>
     {
         policy.WithOrigins(
                 "http://localhost:3000",
+                 "https://empireiran.com",
+                 "https://admin.empireiran.com",
                 "http://localhost:5173",
                 "http://localhost:4173",
                 "http://localhost:8080")
